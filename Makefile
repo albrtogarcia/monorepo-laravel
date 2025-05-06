@@ -28,19 +28,32 @@ build:
 setup: build up
 	# Copia .env.example a .env si no existe en backend y frontend
 	@for app in backend frontend; do \
-		if [ ! -f $$app/html/.env ] && [ -f $$app/html/.env.example ]; then \
+		if [ -f $$app/html/.env ]; then rm $$app/html/.env; fi; \
+		if [ -f $$app/html/.env.example ]; then \
 			cp $$app/html/.env.example $$app/html/.env; \
-			 echo "Copiado .env.example a .env en $$app/html"; \
+			echo "Copiado .env.example a .env en $$app/html"; \
 		fi; \
 	done
-	# Ajusta la configuración de base de datos en backend para usar MariaDB
+	# Refuerza la configuración de MariaDB en backend/html/.env (añade o reemplaza)
 	@echo "Ajustando configuración de base de datos en backend..."
-	sed -i '' -e 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' \
-		-e 's/^#\?DB_HOST=.*/DB_HOST=lm-backend-db/' \
-		-e 's/^#\?DB_PORT=.*/DB_PORT=3306/' \
-		-e 's/^#\?DB_DATABASE=.*/DB_DATABASE=laravel/' \
-		-e 's/^#\?DB_USERNAME=.*/DB_USERNAME=laravel/' \
-		-e 's/^#\?DB_PASSWORD=.*/DB_PASSWORD=secret/' backend/html/.env
+	grep -q '^DB_CONNECTION=' backend/html/.env && \
+		sed -i '' 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' backend/html/.env || \
+		echo 'DB_CONNECTION=mysql' >> backend/html/.env
+	grep -q '^DB_HOST=' backend/html/.env && \
+		sed -i '' 's/^DB_HOST=.*/DB_HOST=lm-backend-db/' backend/html/.env || \
+		echo 'DB_HOST=lm-backend-db' >> backend/html/.env
+	grep -q '^DB_PORT=' backend/html/.env && \
+		sed -i '' 's/^DB_PORT=.*/DB_PORT=3306/' backend/html/.env || \
+		echo 'DB_PORT=3306' >> backend/html/.env
+	grep -q '^DB_DATABASE=' backend/html/.env && \
+		sed -i '' 's/^DB_DATABASE=.*/DB_DATABASE=laravel/' backend/html/.env || \
+		echo 'DB_DATABASE=laravel' >> backend/html/.env
+	grep -q '^DB_USERNAME=' backend/html/.env && \
+		sed -i '' 's/^DB_USERNAME=.*/DB_USERNAME=laravel/' backend/html/.env || \
+		echo 'DB_USERNAME=laravel' >> backend/html/.env
+	grep -q '^DB_PASSWORD=' backend/html/.env && \
+		sed -i '' 's/^DB_PASSWORD=.*/DB_PASSWORD=secret/' backend/html/.env || \
+		echo 'DB_PASSWORD=secret' >> backend/html/.env
 	# Instala dependencias composer y genera clave en backend
 	@echo "Instalando dependencias composer en backend..."
 	docker exec lm-backend-api composer install --working-dir=/var/www/html
@@ -60,6 +73,12 @@ setup: build up
 	docker exec lm-frontend-app composer install --working-dir=/var/www/html
 	@echo "Generando clave de aplicación en frontend..."
 	docker exec lm-frontend-app php artisan key:generate
+	# Si el frontend usa sqlite, crea el archivo database.sqlite vacío si no existe
+	@if grep -q '^DB_CONNECTION=sqlite' frontend/html/.env; then \
+		mkdir -p frontend/html/database; \
+		touch frontend/html/database/database.sqlite; \
+		echo "Archivo database.sqlite creado en frontend/html/database/"; \
+	fi
 
 # Limpia todo el entorno (down + elimina red)
 clean: down
