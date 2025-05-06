@@ -1,0 +1,6 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/albrtogarcia/backend-laravel.git
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/albrtogarcia/frontend-laravel.git
