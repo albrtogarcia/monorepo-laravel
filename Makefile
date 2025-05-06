@@ -1,6 +1,9 @@
 # Makefile para levantar, bajar y limpiar el entorno completo de un monorepo Laravel con Docker
 .PHONY: up down build setup clean help
 
+# Detecta el sed compatible con el sistema operativo
+SED_INPLACE = $(shell if sed --version 2>/dev/null | grep -q GNU; then echo "-i"; else echo "-i ''"; fi)
+
 # Levanta la red y los contenedores de backend y frontend
 up:
 	# Crea la red si no existe
@@ -37,22 +40,22 @@ setup: build up
 	# Refuerza la configuración de MariaDB en backend/html/.env (añade o reemplaza)
 	@echo "Ajustando configuración de base de datos en backend..."
 	grep -q '^DB_CONNECTION=' backend/html/.env && \
-		sed -i '' 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' backend/html/.env || \
+		sed $(SED_INPLACE) 's/^DB_CONNECTION=.*/DB_CONNECTION=mysql/' backend/html/.env || \
 		echo 'DB_CONNECTION=mysql' >> backend/html/.env
 	grep -q '^DB_HOST=' backend/html/.env && \
-		sed -i '' 's/^DB_HOST=.*/DB_HOST=lm-backend-db/' backend/html/.env || \
+		sed $(SED_INPLACE) 's/^DB_HOST=.*/DB_HOST=lm-backend-db/' backend/html/.env || \
 		echo 'DB_HOST=lm-backend-db' >> backend/html/.env
 	grep -q '^DB_PORT=' backend/html/.env && \
-		sed -i '' 's/^DB_PORT=.*/DB_PORT=3306/' backend/html/.env || \
+		sed $(SED_INPLACE) 's/^DB_PORT=.*/DB_PORT=3306/' backend/html/.env || \
 		echo 'DB_PORT=3306' >> backend/html/.env
 	grep -q '^DB_DATABASE=' backend/html/.env && \
-		sed -i '' 's/^DB_DATABASE=.*/DB_DATABASE=laravel/' backend/html/.env || \
+		sed $(SED_INPLACE) 's/^DB_DATABASE=.*/DB_DATABASE=laravel/' backend/html/.env || \
 		echo 'DB_DATABASE=laravel' >> backend/html/.env
 	grep -q '^DB_USERNAME=' backend/html/.env && \
-		sed -i '' 's/^DB_USERNAME=.*/DB_USERNAME=laravel/' backend/html/.env || \
+		sed $(SED_INPLACE) 's/^DB_USERNAME=.*/DB_USERNAME=laravel/' backend/html/.env || \
 		echo 'DB_USERNAME=laravel' >> backend/html/.env
 	grep -q '^DB_PASSWORD=' backend/html/.env && \
-		sed -i '' 's/^DB_PASSWORD=.*/DB_PASSWORD=secret/' backend/html/.env || \
+		sed $(SED_INPLACE) 's/^DB_PASSWORD=.*/DB_PASSWORD=secret/' backend/html/.env || \
 		echo 'DB_PASSWORD=secret' >> backend/html/.env
 	# Instala dependencias composer y genera clave en backend
 	@echo "Instalando dependencias composer en backend..."
