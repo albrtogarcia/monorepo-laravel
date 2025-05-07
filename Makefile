@@ -76,6 +76,9 @@ setup: build up
 	docker exec lm-frontend-app composer install --working-dir=/var/www/html
 	@echo "Generando clave de aplicación en frontend..."
 	docker exec lm-frontend-app php artisan key:generate
+	# Instala dependencias npm en frontend
+	@echo "Instalando dependencias npm en frontend..."
+	cd frontend/html && npm install
 	# Si el frontend usa sqlite, crea el archivo database.sqlite vacío si no existe
 	@if grep -q '^DB_CONNECTION=sqlite' frontend/html/.env; then \
 		mkdir -p frontend/html/database; \
