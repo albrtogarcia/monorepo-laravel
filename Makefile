@@ -71,6 +71,8 @@ setup: build up
 	# Ejecuta migraciones en backend
 	@echo "Ejecutando migraciones en backend..."
 	docker exec lm-backend-api php artisan migrate --force
+	@echo "Instalando dependencias npm en backend..."
+	cd backend/html && npm install
 	# Instala dependencias composer y genera clave en frontend
 	@echo "Instalando dependencias composer en frontend..."
 	docker exec lm-frontend-app composer install --working-dir=/var/www/html
