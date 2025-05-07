@@ -163,7 +163,7 @@ git submodule update --init --recursive
 
 ### Mejoras
 
-- [ ] Añadir los repos como submodules del orquestador principal con `.gitmodules`. Con esto solo hay que clonar el orquestador y este clona los repos dependientes en subdirectorios:
+- [x] Añadir los repos como submodules del orquestador principal con `.gitmodules`. Con esto solo hay que clonar el orquestador y este clona los repos dependientes en subdirectorios:
 - [ ] Pipelines de Bitbucket para CDCI.
 - [ ] Soporte para entornos de producción y desarrollo. Pasar un parámetro (por ejemplo, make setup ENV=prod) para usar archivos .env.production, builds optimizados, etc.
 - [ ] Comando Make para test. Agrega `make test` para ejecutar los tests de ambos proyectos desde la raíz, mostrando el resultado de cada uno.
