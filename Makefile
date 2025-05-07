@@ -1,5 +1,5 @@
 # Makefile para levantar, bajar y limpiar el entorno completo de un monorepo Laravel con Docker
-.PHONY: up down build setup clean help
+.PHONY: up down build setup clean help dev-backend dev-frontend dev
 
 # Detecta el sed compatible con el sistema operativo
 SED_INPLACE = $(shell if sed --version 2>/dev/null | grep -q GNU; then echo "-i"; else echo "-i ''"; fi)
@@ -88,15 +88,33 @@ setup: build up
 		echo "Archivo database.sqlite creado en frontend/html/database/"; \
 	fi
 
+# Comando para desarrollo: Vite en backend
+.PHONY: dev-back
+dev-backend:
+	cd backend/html && npm run dev
+
+# Comando para desarrollo: Vite en frontend
+.PHONY: dev-front
+dev-frontend:
+	cd frontend/html && npm run dev
+
+# Comando para desarrollo: Vite en ambos repos en paralelo
+.PHONY: dev
+dev:
+	$(MAKE) dev-backend & $(MAKE) dev-frontend
+
 # Limpia todo el entorno (down + elimina red)
 clean: down
 
 # Muestra ayuda y comandos disponibles
 help:
 	@echo "Comandos útiles para el monorepo Laravel:";
-	@echo "  make help      # Muestra esta ayuda";
-	@echo "  make setup     # Prepara el entorno completo: build, up, composer, claves, migraciones";
-	@echo "  make up        # Levanta todos los contenedores (requiere build previo si es la primera vez)";
-	@echo "  make build     # Construye las imágenes Docker de backend y frontend";
-	@echo "  make down      # Detiene y elimina todos los contenedores y la red";
-	@echo "  make clean     # Limpia todo el entorno (down + elimina red)";
+	@echo "  make help        # Muestra esta ayuda";
+	@echo "  make setup       # Prepara el entorno completo: build, up, composer, claves, migraciones";
+	@echo "  make up          # Levanta todos los contenedores (requiere build previo si es la primera vez)";
+	@echo "  make build       # Construye las imágenes Docker de backend y frontend";
+	@echo "  make down        # Detiene y elimina todos los contenedores y la red";
+	@echo "  make clean       # Limpia todo el entorno (down + elimina red)";
+	@echo "  make dev-back    # Lanza Vite en modo desarrollo en backend";
+	@echo "  make dev-front   # Lanza Vite en modo desarrollo en frontend";
+	@echo "  make dev         # Lanza Vite en modo desarrollo en backend y frontend en paralelo";

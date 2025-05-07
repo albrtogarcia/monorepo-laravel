@@ -61,6 +61,24 @@ Este monorepo contiene dos aplicaciones Laravel independientes, cada una en su p
 - `make down`      # Detiene y elimina los contenedores y la red
 - `make clean`     # Limpia todo el entorno
 
+## Desarrollo con Vite y Hot Reload
+
+Este monorepo está preparado para desarrollo moderno con Vite y hot reload tanto en backend como en frontend.
+
+### Comandos útiles para desarrollo
+
+- `make dev-backend`   # Lanza Vite en modo desarrollo en backend (puerto 5174)
+- `make dev-frontend`  # Lanza Vite en modo desarrollo en frontend (puerto 5173)
+- `make dev`           # Lanza Vite en modo desarrollo en backend y frontend en paralelo
+
+Accede a las apps en:
+- **Backend:** http://localhost:8010 (assets y hot reload por Vite en http://localhost:5174)
+- **Frontend:** http://localhost:8020 (assets y hot reload por Vite en http://localhost:5173)
+
+> Recuerda: Vite sirve los assets y el hot reload en los puertos 5173 (frontend) y 5174 (backend). Accede siempre a la app Laravel por los puertos 8010/8020.
+
+---
+
 ## Debug y conectividad
 
 - Usa `./check_connectivity.sh` para comprobar la red entre frontend y backend.
