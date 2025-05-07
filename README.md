@@ -27,7 +27,7 @@ Este monorepo contiene dos aplicaciones Laravel independientes, cada una en su p
 
 1. Clona el monorepo y sus submódulos:
    ```sh
-   git clone --recurse-submodules <url-del-repo>
+   git clone --recurse-submodules https://github.com/albrtogarcia/monorepo-laravel.git
    cd lm-monorepo
    ```
 
@@ -74,6 +74,72 @@ Este monorepo contiene dos aplicaciones Laravel independientes, cada una en su p
   docker exec lm-frontend-app composer require livewire/livewire
   ```
 - Para añadir nuevos submódulos Laravel, repite la estructura y añade los pasos al Makefile.
+
+---
+
+## Flujo de trabajo recomendado para equipos con submódulos
+
+### 1. Clonar el monorepo y los submódulos
+
+```sh
+git clone --recurse-submodules https://github.com/albrtogarcia/monorepo-laravel.git
+cd lm-monorepo
+```
+
+Si ya tienes el monorepo y quieres actualizar los submódulos:
+```sh
+git submodule update --init --recursive
+```
+
+---
+
+### 2. Trabajar en un submódulo (por ejemplo, backend)
+
+```sh
+cd backend/html
+# Haz tus cambios, commits y push normalmente
+git checkout -b feature/nueva-funcionalidad
+# ...edita código...
+git add .
+git commit -m "feat: nueva funcionalidad"
+git push origin feature/nueva-funcionalidad
+```
+
+---
+
+### 3. Actualizar la referencia del submódulo en el monorepo
+
+Después de hacer push en el submódulo, vuelve a la raíz del monorepo:
+
+```sh
+cd ../../  # desde backend/html a la raíz del monorepo
+git add backend
+git commit -m "update submodule backend to <SHA del último commit>"
+git push
+```
+
+Haz lo mismo para frontend si trabajas ahí.
+
+---
+
+### 4. Sincronizar cambios de otros compañeros
+
+Cuando otro compañero actualiza un submódulo y hace commit en el monorepo:
+
+```sh
+git pull --recurse-submodules
+git submodule update --init --recursive
+```
+
+---
+
+### 5. Recomendaciones
+
+- Haz commits y push en los submódulos antes de actualizar la referencia en el monorepo.
+- Usa mensajes claros en los commits del monorepo, por ejemplo:
+  `update submodules: backend@abc123 frontend@def456`
+- No edites el contenido de los submódulos desde la raíz del monorepo, hazlo siempre desde dentro del submódulo.
+- Si hay conflictos de submódulos, resuélvelos como cualquier otro conflicto de Git.
 
 ---
 
